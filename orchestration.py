@@ -8,33 +8,23 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# ✅ Read API keys properly from .env
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-# ✅ Initialize Gemini Client (new SDK)
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
-# ✅ Initialize Groq Client
 groq_client = Groq(api_key=GROQ_API_KEY)
 
 
-# ---------------- GEMINI ---------------- #
 
 def analyze_with_gemini(diff):
     prompt = build_prompt(diff)
-
-    # response = gemini_client.models.generate_content(
-    #     model="gemini-1.5-flash",
-    #     contents=prompt,
-    # )
-
-    # Gemini returns text → convert to JSON safely
+    
     try:
         response = gemini_client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
-            # This helps ensure the output is valid JSON
+           
             config={'response_mime_type': 'application/json'} 
         )
         return json.loads(response.text)
@@ -48,7 +38,6 @@ def analyze_with_gemini(diff):
         }
 
 
-# ---------------- GROQ ---------------- #
 
 def analyze_with_groq(diff):
     prompt = build_prompt(diff)
@@ -69,8 +58,6 @@ def analyze_with_groq(diff):
             "best_practices": []
         }
 
-
-# ---------------- ORCHESTRATION ---------------- #
 
 def run_orchestration(diff):
     gemini_result = analyze_with_gemini(diff)
